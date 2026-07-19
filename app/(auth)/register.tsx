@@ -1,6 +1,9 @@
 import FormInput from "@/components/ui/formInput";
+import Header from "@/components/ui/Header";
 import PrimaryButton from "@/components/ui/primary-button";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { registerSchema, type RegisterData } from "@/schemas/auth-schemas";
+import { getYupErrors } from "@/utils/get-yup-errors";
+
 import { Checkbox } from "expo-checkbox";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -13,15 +16,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ValidationError } from "yup";
 
 type AccountRole = "STUDENT" | "INSTRUCTOR";
-type RegisterErrors = {
-  fullName?: string;
-  email?: string;
-  password?: string;
-  passwordConfirmation?: string;
-  isConfirmed?: string;
-};
+type RegisterErrors = Partial<Record<keyof RegisterData, string>>;
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -33,40 +31,27 @@ export default function RegisterScreen() {
   const [erros, setErros] = useState<RegisterErrors>({});
   const [terms, setTerms] = useState<boolean>(false);
 
-  function handleRegister() {
-    const nextError: RegisterErrors = {};
-    if (!fullName.trim()) {
-      nextError.fullName = "Full name is required";
+  async function handleRegister() {
+    try {
+      const data = await registerSchema.validate(
+        {
+          fullName,
+          email,
+          password,
+          passwordConfirmation,
+          terms,
+        },
+        { abortEarly: false },
+      );
+      setErros({});
+      console.log("Valid registration", data);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        setErros(getYupErrors<keyof RegisterErrors>(error));
+        return;
+      }
+      throw error;
     }
-    if (!email.trim()) {
-      nextError.email = "Email is required";
-    } else if (!email.includes("@")) {
-      nextError.email = "Enter a valid email";
-    }
-
-    if (!password) {
-      nextError.password = "Password is required";
-    } else if (password.length < 8) {
-      nextError.password = "Password must contain at least 8 characters";
-    }
-
-    if (!passwordConfirmation) {
-      nextError.passwordConfirmation = "Please confirm your password";
-    } else if (password !== passwordConfirmation) {
-      nextError.passwordConfirmation = "Passwords do not match";
-    }
-
-    if (terms === false) {
-      nextError.isConfirmed = "You must accept the terms";
-    }
-
-    setErros(nextError);
-
-    if (Object.keys(nextError).length > 0) {
-      return;
-    }
-
-    console.log("Sucesso", { role, fullName, email });
   }
 
   return (
@@ -81,18 +66,11 @@ export default function RegisterScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Pressable
-            className="h-12 w-12 items-center justify-center"
-            onPress={() => router.back()}
-          >
-            <AntDesign name="arrow-left" size={20} color="#000" />
-          </Pressable>
-          <Text className="mt-1 text-3xl font-bold text-slate-900">
-            Create account
-          </Text>
-          <Text className="mt-2 text-base text-slate-500">
-            Choose your account type to get started.
-          </Text>
+          <Header
+            title="Create account"
+            description="Choose your account type to get started."
+          />
+
           <Text className="mt-1 text-sm font-medium text-slate-700">
             Account type
           </Text>
@@ -182,18 +160,15 @@ export default function RegisterScreen() {
                   value={terms}
                   onValueChange={setTerms}
                   style={{
-                    borderColor:
-                      !terms && erros.isConfirmed ? "#EF4444" : "#657786",
+                    borderColor: !terms && erros.terms ? "#EF4444" : "#657786",
                   }}
                 />
                 <Text className="text-sm text-slate-600">
                   I agree to the Terms of Use and Privacy Policy.
                 </Text>
               </View>
-              {!terms && erros.isConfirmed ? (
-                <Text className="text-sm text-red-500">
-                  {erros.isConfirmed}
-                </Text>
+              {!terms && erros.terms ? (
+                <Text className="text-sm text-red-500">{erros.terms}</Text>
               ) : null}
             </View>
             <PrimaryButton title="Create" onPress={handleRegister} />
