@@ -6,20 +6,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const slides = [
   {
-    image: require("../assets/images/car.png"),
+    image: require("../../assets/images/car.png"),
     title: "Get ready for your driving test",
     description:
       "Track your lessons, receive feedback, and study helpful content so you feel confident on test day.",
   },
   {
-    image: require("../assets/images/instrutor.png"),
+    image: require("../../assets/images/instrutor.png"),
     title: "Detailed lessons and assessments",
     description:
       "Your instructor records your performance and follows the development of each driving skill.",
   },
   {
     title: "Progress that leads to pass",
-    image: require("../assets/images/chart.png"),
+    image: require("../../assets/images/chart.png"),
     description:
       "Set goals, practise, take mock tests, and monitor your progress.",
   },

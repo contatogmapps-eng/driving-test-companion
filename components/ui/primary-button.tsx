@@ -10,7 +10,7 @@ export default function PrimaryButton({
 }: PrimaryPropos) {
   return (
     <Pressable
-      className={`w-full rounded-xl bg-brand-500 px-6 py-4 top-10 ${
+      className={`w-full rounded-xl bg-brand-500 px-6 py-4  ${
         disabled ? "opacity-50" : "active:opacity-80"
       }`}
       disabled={disabled}

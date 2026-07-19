@@ -1,12 +1,10 @@
 import { useRouter } from "expo-router";
-import Onboarding from "../Onboarding";
+// import Onboarding from "../Onboarding";
 
 export default function HomeScreen() {
   const router = useRouter();
 
-  function handleStart() {
-    router.push("/explore");
-  }
+  function handleStart() {}
 
-  return <Onboarding />;
+  return <></>;
 }
