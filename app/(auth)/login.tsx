@@ -1,5 +1,7 @@
 import FormInput from "@/components/ui/formInput";
 import PrimaryButton from "@/components/ui/primary-button";
+import { loginSchema } from "@/schemas/auth-schemas";
+import { getYupErrors } from "@/utils/get-yup-errors";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
@@ -17,6 +19,7 @@ import Animated, {
   SlideInDown,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ValidationError } from "yup";
 
 type LoginErrors = {
   email?: string;
@@ -34,28 +37,18 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [erros, setErrors] = useState<LoginErrors>({});
 
-  function handleLogin() {
-    const nextErros: LoginErrors = {};
-
-    if (!email.trim()) {
-      nextErros.email = "Email is required";
-    } else if (!email.includes("@")) {
-      nextErros.email = "Enter a valid email address";
+  async function handleLogin() {
+    try {
+      await loginSchema.validate({ email, password }, { abortEarly: false });
+      setErrors({});
+      console.log("Valid login", { email });
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        setErrors(getYupErrors<keyof LoginErrors>(error));
+        return;
+      }
+      throw error;
     }
-
-    if (!password) {
-      nextErros.password = "Password is required";
-    } else if (password.length < 8) {
-      nextErros.password = "Password must contain at least 8 characters";
-    }
-
-    setErrors(nextErros);
-
-    if (Object.keys(nextErros).length > 0) {
-      return;
-    }
-
-    router.replace("/(auth)/register");
   }
 
   return (
@@ -131,7 +124,10 @@ export default function Login() {
                     />
                   </View>
 
-                  <Pressable className="mt-4 self-end">
+                  <Pressable
+                    className="mt-4 self-end"
+                    onPress={() => router.push("/(auth)/forgot-password")}
+                  >
                     <Text className="font-semibold text-brand-500">
                       Forgot your password?
                     </Text>
