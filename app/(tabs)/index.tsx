@@ -1,13 +1,13 @@
 import PrimaryButton from "@/components/ui/primary-button";
 import UpcomingLessonCard from "@/components/ui/upcoming-lesson-card";
 import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { LessonSummary } from "../../types/lessonSummary";
 
-type UpcomingLesson = {
+type UpcomingLesson = Pick<LessonSummary, "schedule" | "meetingPoint"> & {
   type: "REGULAR" | "EXTRA" | "MOCK_TEST" | "PRE_TEST";
-  schedule: string;
-  meetingPoint: string;
 };
 const upcomingLesson: UpcomingLesson = {
   type: "REGULAR",
@@ -23,7 +23,7 @@ const lessonTypeLabels: Record<UpcomingLesson["type"], string> = {
 };
 export default function HomeScreen() {
   const { user, signOut } = useAuth();
-
+  const router = useRouter();
   async function handleSignOut() {
     await signOut();
   }
@@ -59,6 +59,16 @@ export default function HomeScreen() {
               typeLabel={lessonTypeLabels[upcomingLesson.type]}
               schedule={upcomingLesson.schedule}
               meetingPoint={upcomingLesson.meetingPoint}
+              onPress={() => {
+                router.push({
+                  pathname: "/lesson-details",
+                  params: {
+                    typeLabel: lessonTypeLabels[upcomingLesson.type],
+                    schedule: upcomingLesson.schedule,
+                    meetingPoint: upcomingLesson.meetingPoint,
+                  },
+                });
+              }}
             />
           </View>
           <View className="mt-6">

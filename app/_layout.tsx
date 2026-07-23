@@ -22,8 +22,17 @@ function RootNavigator() {
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
+
       <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="lesson-details"
+          options={{
+            headerShown: true,
+            title: "Lesson details",
+            headerBackButtonDisplayMode: "minimal",
+          }}
+        />
       </Stack.Protected>
     </Stack>
   );
