@@ -2,16 +2,16 @@ import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
-type iconProps = {
+type IconProps = {
   iconName?: keyof typeof AntDesign.glyphMap;
   iconSize?: number;
   iconColor?: string;
   onIconPress?: () => void;
 };
 
-type HeaderProps = iconProps & {
+type HeaderProps = IconProps & {
   title: string;
-  description: string;
+  description?: string;
 };
 
 export default function Header({

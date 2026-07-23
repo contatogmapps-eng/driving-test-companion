@@ -1,24 +1,36 @@
-import { Pressable, PressableProps, Text } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  type PressableProps,
+  Text,
+} from "react-native";
 
-type PrimaryPropos = Omit<PressableProps, "children"> & {
+type PrimaryButtonProps = Omit<PressableProps, "children"> & {
   title: string;
+  isLoading?: boolean;
 };
 export default function PrimaryButton({
   title,
   disabled,
+  isLoading = false,
   ...pressableProps
-}: PrimaryPropos) {
+}: PrimaryButtonProps) {
+  const isDisabled = disabled || isLoading;
   return (
     <Pressable
       className={`w-full rounded-xl bg-brand-500 px-6 py-4  ${
-        disabled ? "opacity-50" : "active:opacity-80"
+        isDisabled ? "opacity-50" : "active:opacity-80"
       }`}
-      disabled={disabled}
+      disabled={isDisabled}
       {...pressableProps}
     >
-      <Text className="text-center text-base font-semibold text-white">
-        {title}
-      </Text>
+      {isLoading ? (
+        <ActivityIndicator color="white" />
+      ) : (
+        <Text className="text-center text-base font-semibold text-white">
+          {title}
+        </Text>
+      )}
     </Pressable>
   );
 }

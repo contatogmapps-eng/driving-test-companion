@@ -14,13 +14,7 @@ export default function TabLayout() {
         headerShown: false,
       }}
     >
-      <Tabs.Screen name="index" options={{}} />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-        }}
-      />
+      <Tabs.Screen name="index" options={{ headerShown: false }} />
     </Tabs>
   );
 }
