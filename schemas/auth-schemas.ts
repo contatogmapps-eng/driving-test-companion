@@ -1,4 +1,5 @@
 import * as yup from "yup";
+const accountRoles = ["STUDENT", "INSTRUCTOR"] as const;
 
 const email = yup
   .string()
@@ -19,6 +20,11 @@ export const loginSchema = yup.object({
 });
 
 export const registerSchema = yup.object({
+  role: yup
+    .mixed<(typeof accountRoles)[number]>()
+    .oneOf(accountRoles, "Choose an account type")
+    .required("Account type is required"),
+
   fullName: yup.string().trim().required("Full name is required"),
   email,
   password,
