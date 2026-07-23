@@ -1,5 +1,6 @@
 import FormInput from "@/components/ui/formInput";
 import PrimaryButton from "@/components/ui/primary-button";
+import { useAuth } from "@/hooks/use-auth";
 import { loginSchema } from "@/schemas/auth-schemas";
 import { getYupErrors } from "@/utils/get-yup-errors";
 import { useRouter } from "expo-router";
@@ -36,18 +37,26 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erros, setErrors] = useState<LoginErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signIn } = useAuth();
 
   async function handleLogin() {
+    setIsSubmitting(true);
     try {
-      await loginSchema.validate({ email, password }, { abortEarly: false });
+      const validationData = await loginSchema.validate(
+        { email, password },
+        { abortEarly: false },
+      );
       setErrors({});
-      console.log("Valid login", { email });
+      await signIn(validationData);
     } catch (error) {
       if (error instanceof ValidationError) {
         setErrors(getYupErrors<keyof LoginErrors>(error));
         return;
       }
       throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -134,11 +143,15 @@ export default function Login() {
                   </Pressable>
 
                   <View className="mt-8">
-                    <PrimaryButton title="Sign in" onPress={handleLogin} />
+                    <PrimaryButton
+                      title="Sign in"
+                      onPress={handleLogin}
+                      isLoading={isSubmitting}
+                    />
                   </View>
                   <View className="mt-6 flex-row justify-center gap-2">
                     <Text className="text-slate-500">
-                      Don&apos;t have account?
+                      Don&apos;t have an account?
                     </Text>
                     <Pressable
                       onPress={() => router.navigate("/(auth)/register")}
