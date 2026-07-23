@@ -35,6 +35,7 @@ export default function RegisterScreen() {
     try {
       const data = await registerSchema.validate(
         {
+          role,
           fullName,
           email,
           password,
@@ -171,7 +172,7 @@ export default function RegisterScreen() {
                 <Text className="text-sm text-red-500">{erros.terms}</Text>
               ) : null}
             </View>
-            <PrimaryButton title="Create" onPress={handleRegister} />
+            <PrimaryButton title="Create account" onPress={handleRegister} />
             <View className="flex-row justify-center gap-2">
               <Text className="text-slate-500">Already have an account?</Text>
               <Pressable onPress={() => router.replace("/(auth)/login")}>

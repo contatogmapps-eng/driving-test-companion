@@ -29,6 +29,7 @@ export default function ForgotPassword() {
         setErros(getYupErrors<keyof ForgotPasswordData>(error));
         return;
       }
+      throw error;
     }
   }
   return (

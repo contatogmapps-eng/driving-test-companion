@@ -1,3 +1,5 @@
+import PrimaryButton from "@/components/ui/primary-button";
+import useOnboarding from "@/hooks/use-onboarding";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Image, Text, View } from "react-native";
@@ -18,7 +20,7 @@ const slides = [
       "Your instructor records your performance and follows the development of each driving skill.",
   },
   {
-    title: "Progress that leads to pass",
+    title: "Progress that leads to a pass",
     image: require("../../assets/images/chart.png"),
     description:
       "Set goals, practise, take mock tests, and monitor your progress.",
@@ -28,17 +30,19 @@ const slides = [
 export default function OnboardingScreen() {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { completeOnboarding } = useOnboarding();
 
   const slide = slides[currentSlide];
   const isLastSlide = currentSlide === slides.length - 1;
 
-  function handleNext() {
+  async function handleNext() {
     if (!isLastSlide) {
       setCurrentSlide(currentSlide + 1);
       return;
     }
 
-    router.replace("/login");
+    await completeOnboarding();
+    router.replace("/(auth)/login");
   }
 
   function handlePrevious() {
@@ -69,7 +73,7 @@ export default function OnboardingScreen() {
           <View className="flex-1 items-center justify-center">
             <Image
               source={slide.image}
-              className="h-80 w-100"
+              className="h-80 w-80"
               resizeMode="contain"
             />
 
@@ -94,6 +98,10 @@ export default function OnboardingScreen() {
               ))}
             </View>
           </View>
+          <PrimaryButton
+            title={isLastSlide ? "Get started" : "Continue"}
+            onPress={handleNext}
+          />
         </View>
       </SafeAreaView>
     </GestureDetector>
