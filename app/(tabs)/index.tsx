@@ -1,8 +1,26 @@
 import PrimaryButton from "@/components/ui/primary-button";
+import UpcomingLessonCard from "@/components/ui/upcoming-lesson-card";
 import { useAuth } from "@/hooks/use-auth";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+type UpcomingLesson = {
+  type: "REGULAR" | "EXTRA" | "MOCK_TEST" | "PRE_TEST";
+  schedule: string;
+  meetingPoint: string;
+};
+const upcomingLesson: UpcomingLesson = {
+  type: "REGULAR",
+  schedule: "Tomorrow at 10:00 AM",
+  meetingPoint: "Wilton Test Centre, Co. Cork",
+};
+
+const lessonTypeLabels: Record<UpcomingLesson["type"], string> = {
+  REGULAR: "REGULAR LESSON",
+  EXTRA: "EXTRA LESSON",
+  MOCK_TEST: "MOCK TEST",
+  PRE_TEST: "PRE-TEST LESSON",
+};
 export default function HomeScreen() {
   const { user, signOut } = useAuth();
 
@@ -33,7 +51,16 @@ export default function HomeScreen() {
               Add your test date and centre to start your countdown.
             </Text>
           </View>
-
+          <View className="mt-6">
+            <Text className="text-xl font-bold text-slate-900">
+              Upcoming lesson
+            </Text>
+            <UpcomingLessonCard
+              typeLabel={lessonTypeLabels[upcomingLesson.type]}
+              schedule={upcomingLesson.schedule}
+              meetingPoint={upcomingLesson.meetingPoint}
+            />
+          </View>
           <View className="mt-6">
             <Text className="text-xl font-bold text-slate-900">
               Your progress
