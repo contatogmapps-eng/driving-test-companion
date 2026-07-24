@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/contexts/auth-context";
+import { LessonProvider } from "@/contexts/lesson-context";
 import { OnboardingProvider } from "@/contexts/onboarding-context";
 import { useAuth } from "@/hooks/use-auth";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -44,12 +45,14 @@ export default function RootLayout() {
     <GestureHandlerRootView className={"flex-1"}>
       <OnboardingProvider>
         <AuthProvider>
-          <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <RootNavigator />
-            <StatusBar style="auto" />
-          </ThemeProvider>
+          <LessonProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <RootNavigator />
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </LessonProvider>
         </AuthProvider>
       </OnboardingProvider>
     </GestureHandlerRootView>
