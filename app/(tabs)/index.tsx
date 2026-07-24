@@ -1,29 +1,29 @@
 import PrimaryButton from "@/components/ui/primary-button";
 import UpcomingLessonCard from "@/components/ui/upcoming-lesson-card";
 import { useAuth } from "@/hooks/use-auth";
+import { useLesson } from "@/hooks/use-lesson";
+import type { LessonType } from "@/types/lesson";
+import { formatLessonSchedule } from "@/utils/format-lesson-schedule";
 import { useRouter } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { LessonSummary } from "../../types/lessonSummary";
 
-type UpcomingLesson = Pick<LessonSummary, "schedule" | "meetingPoint"> & {
-  type: "REGULAR" | "EXTRA" | "MOCK_TEST" | "PRE_TEST";
-};
-const upcomingLesson: UpcomingLesson = {
-  type: "REGULAR",
-  schedule: "Tomorrow at 10:00 AM",
-  meetingPoint: "Wilton Test Centre, Co. Cork",
-};
-
-const lessonTypeLabels: Record<UpcomingLesson["type"], string> = {
+const lessonTypeLabels: Record<LessonType, string> = {
   REGULAR: "REGULAR LESSON",
   EXTRA: "EXTRA LESSON",
   MOCK_TEST: "MOCK TEST",
   PRE_TEST: "PRE-TEST LESSON",
 };
+
 export default function HomeScreen() {
   const { user, signOut } = useAuth();
   const router = useRouter();
+
+  const { isLessonLoading, upcomingLesson } = useLesson();
+
+  const scheduleLabel = upcomingLesson
+    ? formatLessonSchedule(upcomingLesson.scheduledAt)
+    : null;
   async function handleSignOut() {
     await signOut();
   }
@@ -55,21 +55,31 @@ export default function HomeScreen() {
             <Text className="text-xl font-bold text-slate-900">
               Upcoming lesson
             </Text>
-            <UpcomingLessonCard
-              typeLabel={lessonTypeLabels[upcomingLesson.type]}
-              schedule={upcomingLesson.schedule}
-              meetingPoint={upcomingLesson.meetingPoint}
-              onPress={() => {
-                router.push({
-                  pathname: "/lesson-details",
-                  params: {
-                    typeLabel: lessonTypeLabels[upcomingLesson.type],
-                    schedule: upcomingLesson.schedule,
-                    meetingPoint: upcomingLesson.meetingPoint,
-                  },
-                });
-              }}
-            />
+            {isLessonLoading ? (
+              <Text className="mt-4 text-sm text-slate-500">
+                Loading lesson...
+              </Text>
+            ) : upcomingLesson && scheduleLabel ? (
+              <UpcomingLessonCard
+                typeLabel={lessonTypeLabels[upcomingLesson.type]}
+                schedule={scheduleLabel}
+                meetingPoint={upcomingLesson.meetingPoint}
+                onPress={() => {
+                  router.push({
+                    pathname: "/lesson-details",
+                    params: {
+                      typeLabel: lessonTypeLabels[upcomingLesson.type],
+                      schedule: scheduleLabel,
+                      meetingPoint: upcomingLesson.meetingPoint,
+                    },
+                  });
+                }}
+              />
+            ) : (
+              <Text className="mt-4 text-sm text-slate-500">
+                No upcoming lesson scheduled.
+              </Text>
+            )}
           </View>
           <View className="mt-6">
             <Text className="text-xl font-bold text-slate-900">

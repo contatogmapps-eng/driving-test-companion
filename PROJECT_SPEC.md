@@ -145,15 +145,14 @@ refactor(ui): extract lesson card component
 
 ## Current learning step
 
-The upcoming-lesson dashboard milestone is complete:
+The lesson persistence milestone is complete:
 
-1. Added the upcoming lesson section and typed lesson data.
-2. Extracted the reusable upcoming lesson card.
-3. Added protected navigation to the lesson details screen.
-4. Passed typed lesson data through route parameters.
+1. Added a typed persistence model with stable lesson data.
+2. Added AsyncStorage functions to save and load the upcoming lesson.
+3. Added LessonContext, LessonProvider, and the useLesson hook.
+4. Connected the HomeScreen to loading, stored lesson, and empty states.
+5. Added ISO date formatting for user-facing lesson schedules.
 
-The next planned milestone is lesson persistence. Implement it incrementally in
-a separate feature branch, starting with a typed storage model before adding
-AsyncStorage.
+The next learning milestone has not been selected.
 
 Update this section whenever the active learning milestone changes.
